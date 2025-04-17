@@ -1,26 +1,71 @@
-#  Как работать с репозиторием финального задания
+# Kittygram - социальная сеть для обмена фотографиями любимых питомцев. 
 
-## Что нужно сделать
+## Стек технологий
+`Python` `YAML` `Django` `Django REST Framework` `Djoser` `API` `Nginx` `Docker` `PostgreSQL` `Gunicorn` `Postman` `GitHub Actions(CI/CD)`
 
-Настроить запуск проекта Kittygram в контейнерах и CI/CD с помощью GitHub Actions
+**Ссылка на проект:**
+[kkittygram.duckdns.org](https://kkittygram.duckdns.org)
 
-## Как проверить работу с помощью автотестов
+## Локальный запуск с Docker
 
-В корне репозитория создайте файл tests.yml со следующим содержимым:
-```yaml
-repo_owner: ваш_логин_на_гитхабе
-kittygram_domain: полная ссылка (https://доменное_имя) на ваш проект Kittygram
-taski_domain: полная ссылка (https://доменное_имя) на ваш проект Taski
-dockerhub_username: ваш_логин_на_докерхабе
+**Клонировать репозиторий**
+```bash
+git clone git@github.com:okhotinaks/kittygram_final.git
 ```
+```bash
+cd kittygram_final
+```
+**Создать виртуальное окружение**
+```bash
+python -m venv venv
+```
+```bash
+source venv/bin/activate
+```
+**Установить зависимости из файла requirements.txt**
+```bash
+python3 -m pip install --upgrade pip
+```
+```bash
+cd backend
+```
+```bash
+pip install -r requirements.txt
+```
+**Создать файл .env (в корневой директории) в соответствии с примером .env.example**
+```bash
+cd ..
+```
+```bash
+touch .env
+```
+**Запустить контейнеры**
+```bash
+docker compose up --build
+```
+**Создаем и применяем миграции**
+```bash
+docker compose exec backend python manage.py makemigrations
+```
+```bash
+docker compose exec backend python manage.py migrate
+```
+**Сборка статики**
+```bash
+docker compose exec backend python manage.py collectstatic
+docker compose exec backend cp -r /app/collected_static/. /backend_static/static/
+``` 
+**Проект доступен по адресу:**
+http://localhost:9000/
 
-Скопируйте содержимое файла `.github/workflows/main.yml` в файл `kittygram_workflow.yml` в корневой директории проекта.
+## Автоматическое развертывание (CI/CD)
+Настроен деплой на сервер через GitHub Actions.
+После каждого обновления репозитория (при пуше в ветку main) будет происходить:
+- Проверка кода на соответсвие стандарту PEP8(с помощью пакета flake8)
+- Сборка и отправка докер-образов на Docker Hub: frontend, backend, gateway
+- Разворачивание проекта на удаленном сервере
+- Применение миграций, сборка статики
+- Отправка сообщения в Telegram в случае успеха
 
-Для локального запуска тестов создайте виртуальное окружение, установите в него зависимости из backend/requirements.txt и запустите в корневой директории проекта `pytest`.
-
-## Чек-лист для проверки перед отправкой задания
-
-- Проект Taski доступен по доменному имени, указанному в `tests.yml`.
-- Проект Kittygram доступен по доменному имени, указанному в `tests.yml`.
-- Пуш в ветку main запускает тестирование и деплой Kittygram, а после успешного деплоя вам приходит сообщение в телеграм.
-- В корне проекта есть файл `kittygram_workflow.yml`.
+**Автор проекта:**
+Охотина Ксения Николаевна - [github.com/okhotinaks](https://github.com/okhotinaks)
